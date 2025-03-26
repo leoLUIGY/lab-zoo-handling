@@ -44,36 +44,37 @@ public class Penguin extends Animal implements Walk, Swim, Serializable {
     }
 
     @Override
-    public void eatingFood()
+    public String eatingFood()
     {
-        System.out.println("Penguin: I am eating delicious fish");
+        return "Pinguin: eu estou me alimentando com peixe";
     }
 
     @Override
-    public void eatingCompleted()
+    public String eatingCompleted()
     {
-        System.out.println("Penguin: I have eaten fish");
+
+        return "Pinguin: eu me alimentei com peixe";
     }
 
     @Override
-    public void swimming()
+    public String swimming()
     {
-        System.out.println("Penguin: I am swimming at the speed " + swimSpeed + " nautical miles per hour");
+       return "Pinguin: eu estou nadando em " + swimSpeed + " km por hora";
     }
 
     @Override
-    public void walking()
+    public String walking()
     {
-        System.out.println("Penguin: I am walking at the speed " + walkSpeed + " mph");
+        return "Pinguin: eu estou caminhando em " + walkSpeed + " km por hora";
     }
 
 
     @Override
     public String toString() {
-        return "Penguin{" +
-                "isSwimming=" + isSwimming +
-                ", walkSpeed=" + walkSpeed +
-                ", swimSpeed=" + swimSpeed +
+        return "Pinguin{" +
+                "esta nadando=" + isSwimming +
+                ", velocidade de caminhada=" + walkSpeed +
+                ", velocidade de mergulho=" + swimSpeed +
                 '}';
     }
 }

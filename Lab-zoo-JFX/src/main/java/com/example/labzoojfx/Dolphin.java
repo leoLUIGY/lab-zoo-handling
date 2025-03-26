@@ -35,25 +35,27 @@ public class Dolphin extends Animal implements Swim, Serializable {
     }
 
     @Override
-    public void eatingFood() {
-        System.out.println("Dolphin: I am eating delicious fish");
+    public String eatingFood() {
+        return "Golfinho: eu estou me alimentando de peixe";
     }
 
     @Override
-    public void eatingCompleted() {
-        System.out.println("Dolphin: I have eaten fish.");
+    public String eatingCompleted() {
+
+        return "Golfinho: eu me alimentei de peixe.";
     }
 
     @Override
-    public void swimming() {
-        System.out.println("Dolphin: I am swimming at the speed " + swimmingSpeed);
+    public String swimming() {
+
+        return "Golfinho: eu estou nadando na velocidade de " + getSwimmingSpeed() + "km por hora";
     }
 
     @Override
     public String toString() {
-        return "Dolphin{" +
-                "color='" + color + '\'' +
-                ", swimmingSpeed=" + swimmingSpeed +
+        return "Golfinho{" +
+                "cor='" + color + '\'' +
+                ", velocidade de mergulho=" + swimmingSpeed +
                 '}';
     }
 }

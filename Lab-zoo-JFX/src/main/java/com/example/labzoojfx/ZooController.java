@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static java.lang.Integer.parseInt;
+
 public class ZooController  {
 
     GridPane grid = new GridPane();
@@ -55,20 +57,9 @@ public class ZooController  {
     }
     public void initialConfig(){
         // Inicia o delay
-        grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        ConfigPanel("Animais:");
 
-        Scene scene = new Scene(grid, 300, 275);
-        HelloApplication.primaryStage.setScene(scene);
-
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
-
-        Button btn = new Button("Tiger");
+        Button btn = new Button("Tigre");
         grid.add(btn, 1, 1);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -82,7 +73,7 @@ public class ZooController  {
             }
         });
 
-        Button btn1 = new Button("Dolphin");
+        Button btn1 = new Button("Golfinho");
         grid.add(btn1, 1, 2);
         btn1.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -96,7 +87,7 @@ public class ZooController  {
             }
         });
 
-        Button btn2 = new Button("Penguin");
+        Button btn2 = new Button("Pinguin");
         grid.add(btn2, 1, 3);
         btn2.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -110,11 +101,31 @@ public class ZooController  {
             }
         });
 
+        Button btn3 = new Button("Salvar dados");
+        grid.add(btn3, 1, 4);
+        btn3.setOnAction(new EventHandler<ActionEvent>() {
 
+            @Override
+            public void handle(ActionEvent e) {
+                writeObjectsToFile(tiger, penguin, dolphin);
+            }
+        });
 
-        Button btn4 = new Button("Sair");
+        Button btn4= new Button("Ler dados");
         grid.add(btn4, 1, 5);
         btn4.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+               readObjectsFromFile();
+            }
+        });
+
+
+
+        Button btn5 = new Button("Sair");
+        grid.add(btn5, 1, 6);
+        btn5.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
@@ -129,21 +140,21 @@ public class ZooController  {
 
     @FXML
     private void selectTiger() throws IOException {
-        HelloApplication.selected = "Tiger";
+        HelloApplication.selected = "Tigre";
         setOptions();
         //loadNewScene("animal-view.fxml");
     }
 
     @FXML
     private void selectDolphin() throws IOException {
-        HelloApplication.selected="Dolphin";
+        HelloApplication.selected="Golfinho";
         setOptions();
         //loadNewScene("animal-view.fxml");
     }
 
     @FXML
     private void selectPenguin() throws IOException {
-        HelloApplication.selected="Penguin";
+        HelloApplication.selected="Pinguin";
         setOptions();
         //loadNewScene("animal-view.fxml");
     }
@@ -151,34 +162,23 @@ public class ZooController  {
     @FXML
     public void setOptions()
     {
-        grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        ConfigPanel("Opções");
 
-        Scene scene = new Scene(grid, 300, 275);
-        HelloApplication.primaryStage.setScene(scene);
-
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
-
-        Button btn = new Button("Modificar propriedades");
+        Button btn = new Button("Mudar Caracteristicas");
         grid.add(btn, 1, 1);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 try {
-                    setProperties();
+                    setProperties(HelloApplication.selected);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
 
-        Button btn1 = new Button("Mostrar Propriedades");
+        Button btn1 = new Button("Ver Caracteristicas");
         grid.add(btn1, 1, 2);
         btn1.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -192,7 +192,7 @@ public class ZooController  {
             }
         });
 
-        Button btn2 = new Button("Mostrar Movimento");
+        Button btn2 = new Button("Ver Movimento");
         grid.add(btn2, 1, 3);
         btn2.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -202,7 +202,7 @@ public class ZooController  {
             }
         });
 
-        Button btn3 = new Button("Mostrar Comendo");
+        Button btn3 = new Button("Ver se Alimentando");
         grid.add(btn3, 1, 4);
         btn3.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -218,7 +218,7 @@ public class ZooController  {
 
             @Override
             public void handle(ActionEvent e) {
-                setOptions();
+                initialize();
                 //loadNewScene("hello-view.fxml");
             }
         });
@@ -227,94 +227,120 @@ public class ZooController  {
 
 
     @FXML
-    private void setProperties() throws IOException {
-        grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-
-        Scene scene = new Scene(grid, 300, 275);
-        HelloApplication.primaryStage.setScene(scene);
-
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+    private void setProperties(String animalName) throws IOException {
+        ConfigPanel("Caracteristicas: "+ animalName);
 
 //        addTextField("test");
         System.out.println("teste " + HelloApplication.selected);
+
+        Label ageAnimal = new Label("idade:");
+        grid.add(ageAnimal, 0, 1);
+        TextField ageAnimalField = new TextField();
+        grid.add(ageAnimalField, 1, 1);
+
+        Label weightAnimal = new Label("Peso:");
+        grid.add(weightAnimal, 0, 2);
+        TextField weightAnimalField = new TextField();
+        grid.add(weightAnimalField, 1, 2);
+
+
+        Label heightAnimal = new Label("Altura:");
+        grid.add(heightAnimal, 0, 3);
+        TextField heightAnimalField = new TextField();
+        grid.add(heightAnimalField, 1, 3);
         switch (HelloApplication.selected)
         {
-            case "Tiger":
+            case "Tigre":
 
-                Label numOfStribes = new Label("Number of Stripes:");
-                grid.add(numOfStribes, 0, 1);
+
+
+                Label numOfStribes = new Label("Numero de listras:");
+                grid.add(numOfStribes, 0, 4);
                 TextField numOfStribesField = new TextField();
-                grid.add(numOfStribesField, 1, 1);
+                grid.add(numOfStribesField, 1, 4);
 
-                Label speed= new Label("Speed:");
-                grid.add(speed, 0, 2);
+                Label speed= new Label("velocidade de corrida:");
+                grid.add(speed, 0, 5);
                 TextField speedField = new TextField();
-                grid.add(speedField, 1, 2);
+                grid.add(speedField, 1, 5);
 
-                Label roar= new Label("Sound Level of Roar:");
-                grid.add(roar, 0, 3);
+                Label roar= new Label("Nivel de som do rugido:");
+                grid.add(roar, 0, 6);
                 TextField roarField = new TextField();
-                grid.add(roarField, 1, 3);
+                grid.add(roarField, 1, 6);
 
-                Button btn = new Button("Save");
-                grid.add(btn, 1, 4);
+                Button btn = new Button("Salvar");
+                grid.add(btn, 1, 7);
                 btn.setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
                     public void handle(ActionEvent e) {
+                        tiger.setAge(Integer.parseInt(ageAnimalField.getText()));
+                        tiger.setWeight(Float.parseFloat(weightAnimalField.getText()));
+                        tiger.setHeight(Float.parseFloat(heightAnimalField.getText()));
+                        tiger.setSoundLevel(Integer.parseInt(roarField.getText()));
+                        tiger.setNumberOfStripes(Integer.parseInt(numOfStribesField.getText()));
+                        tiger.setSpeed(Integer.parseInt(speedField.getText()));
+                        tiger.setSoundLevel(Integer.parseInt(roarField.getText()));
                         setOptions();
                     }
                 });
                 break;
-            case "Dolphin":
-                Label color = new Label("Color:");
-                grid.add(color, 0, 1);
+            case "Golfinho":
+
+                Label color = new Label("Cor:");
+                grid.add(color, 0, 4);
                 TextField colorField = new TextField();
-                grid.add(colorField, 1, 1);
+                grid.add(colorField, 1, 4);
 
-                Label swimming= new Label("Swimming Speed:");
-                grid.add(swimming, 0, 2);
+                Label swimming= new Label("Velocidade de Mergulho:");
+                grid.add(swimming, 0, 5);
                 TextField swimmingField = new TextField();
-                grid.add(swimmingField, 1, 2);
+                grid.add(swimmingField, 1, 5);
 
-                Button btnDolphin = new Button("Save");
-                grid.add(btnDolphin, 1, 4);
+                Button btnDolphin = new Button("Salvar");
+                grid.add(btnDolphin, 1, 6);
                 btnDolphin.setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
                     public void handle(ActionEvent e) {
+                        dolphin.setAge(Integer.parseInt(ageAnimalField.getText()));
+                        dolphin.setWeight(Float.parseFloat(weightAnimalField.getText()));
+                        dolphin.setHeight(Float.parseFloat(heightAnimalField.getText()));
+                        dolphin.setColor(colorField.getText());
+                        dolphin.setSwimmingSpeed(Integer.parseInt(swimmingField.getText()));
                         setOptions();
                     }
                 });
                 break;
-            case "Penguin":
-                Label isSwimming = new Label("isPenguin Swimming:");
-                grid.add(isSwimming, 0, 1);
+            case "Pinguin":
+                Label isSwimming = new Label("pinguin esta nadando?(sim ou nao):");
+                grid.add(isSwimming, 0, 4);
                 TextField isSwimmingField = new TextField();
-                grid.add(isSwimmingField, 1, 1);
+                grid.add(isSwimmingField, 1, 4);
 
-                Label speedPenguin= new Label("Walking Speed:");
-                grid.add(speedPenguin, 0, 2);
+                Label speedPenguin= new Label("Velocidade de Caminhada:");
+                grid.add(speedPenguin, 0, 5);
                 TextField speedFieldPenguin = new TextField();
-                grid.add(speedFieldPenguin, 1, 2);
+                grid.add(speedFieldPenguin, 1, 5);
 
-                Label roarPenguin= new Label("Swimming Speed:");
-                grid.add(roarPenguin, 0, 3);
-                TextField roarFieldPenguin = new TextField();
-                grid.add(roarFieldPenguin, 1, 3);
+                Label swimmingSpeedPenguin= new Label("velocidade de Mergulho:");
+                grid.add(swimmingSpeedPenguin, 0, 6);
+                TextField swimmingFieldPenguin = new TextField();
+                grid.add(swimmingFieldPenguin, 1, 6);
 
-                Button btnPenguin = new Button("Save");
-                grid.add(btnPenguin, 1, 4);
+                Button btnPenguin = new Button("Salvar");
+                grid.add(btnPenguin, 1, 7);
                 btnPenguin.setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
                     public void handle(ActionEvent e) {
+                        penguin.setAge(Integer.parseInt(ageAnimalField.getText()));
+                        penguin.setWeight(Float.parseFloat(weightAnimalField.getText()));
+                        penguin.setHeight(Float.parseFloat(heightAnimalField.getText()));
+                        penguin.setSwimming((isSwimming.getText().equalsIgnoreCase("yes")));
+                        penguin.setWalkSpeed(Integer.parseInt(speedFieldPenguin.getText()));
+                        penguin.setSwimSpeed(Integer.parseInt(swimmingFieldPenguin.getText()));
                         setOptions();
                     }
                 });
@@ -326,44 +352,48 @@ public class ZooController  {
 
     }
 
-    @FXML
-    private void showProperties() throws IOException {
+    private void ConfigPanel(String Caracteristicas) {
         grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 500, 400);
         HelloApplication.primaryStage.setScene(scene);
 
-        Text scenetitle = new Text("Welcome");
+        Text scenetitle = new Text(Caracteristicas);
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
+    }
+
+    @FXML
+    private void showProperties() throws IOException {
+        ConfigPanel("Caracteristicas: " + HelloApplication.selected);
 
 //        addTextField("test");
         System.out.println("teste " + HelloApplication.selected);
         switch (HelloApplication.selected)
         {
-            case "Tiger":
+            case "Tigre":
 
-                Label introTigerLabel = new Label(tiger.getName() + " " +tiger.getAge() + " "+
+                Label introTigerLabel = new Label( "Idade: " +tiger.getAge() + " Altura"+
                         tiger.getHeight());
                 grid.add(introTigerLabel, 0, 1);
 
-                Label weightTigerLabel =  new Label("" + tiger.getWeight());
+                Label weightTigerLabel =  new Label("Peso: " + tiger.getWeight());
                 grid.add(weightTigerLabel, 0, 2);
 
-                Label numTigerLabel= new Label("" + tiger.getNumberOfStripes());
+                Label numTigerLabel= new Label("Numero de Listras: " + tiger.getNumberOfStripes());
                 grid.add(numTigerLabel, 0, 3);
 
-                Label speedTigerLabel= new Label("" + tiger.getSpeed());
+                Label speedTigerLabel= new Label("Velocidade: " + tiger.getSpeed());
                 grid.add(speedTigerLabel, 0, 4);
 
-                Label levelTigerLabel= new Label("" + tiger.getSoundLevel());
+                Label levelTigerLabel= new Label("Nivel de Som" + tiger.getSoundLevel());
                 grid.add(levelTigerLabel, 0, 5);
 
-                Button btn = new Button("Exit");
+                Button btn = new Button("sair");
                 grid.add(btn, 1, 6);
                 btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -373,22 +403,23 @@ public class ZooController  {
                     }
                 });
                 break;
-            case "Dolphin":
-                Label introDolphinLabel = new Label(dolphin.getName() + " " +dolphin.getAge() + " "+ dolphin.getHeight());
+            case "Golfinho":
+                Label introDolphinLabel = new Label("Idade: " +dolphin.getAge() +
+                        " Altura: "+ dolphin.getHeight());
                 grid.add(introDolphinLabel, 0, 1);
 
-                Label roar= new Label("" + dolphin.getWeight());
+                Label roar= new Label("Peso: " + dolphin.getWeight());
                 grid.add(roar, 0, 2);
 
-                Label color= new Label(dolphin.getColor());
+                Label color= new Label("Cor: " + dolphin.getColor());
                 grid.add(color, 0, 3);
 
-                Label speedLabel= new Label("" + dolphin.getSwimmingSpeed());
+                Label speedLabel= new Label("Velocidade de Mergulho: " + dolphin.getSwimmingSpeed());
                 grid.add(speedLabel, 0, 4);
 
 
 
-                Button btnDolphin = new Button("Exit");
+                Button btnDolphin = new Button("Sair");
                 grid.add(btnDolphin, 1, 5);
                 btnDolphin.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -398,22 +429,23 @@ public class ZooController  {
                     }
                 });
                 break;
-            case "Penguin":
-                Label introPenguinLabel = new Label(penguin.getName() + " " +penguin.getAge() + " "+ penguin.getHeight());
+            case "Pinguin":
+                Label introPenguinLabel = new Label("Idade: " +penguin.getAge() +
+                        " Altura: "+ penguin.getHeight());
                 grid.add(introPenguinLabel, 0, 1);
 
-                Label weightPenguinLabel= new Label("" +penguin.getWeight());
+                Label weightPenguinLabel= new Label("Peso: " +penguin.getWeight());
                 grid.add(weightPenguinLabel, 0, 2);
 
-                Label speedPenguinLabel= new Label("" + penguin.getWalkSpeed());
+                Label speedPenguinLabel= new Label("Velocidade de Passo: " + penguin.getWalkSpeed());
                 grid.add(speedPenguinLabel, 0, 3);
 
-                Label swimSpeedLabel= new Label("" + penguin.getSwimSpeed());
+                Label swimSpeedLabel= new Label("Velocidade de Mergulho: " + penguin.getSwimSpeed());
                 grid.add(swimSpeedLabel, 0, 4);
 
 
 
-                Button btnPenguin = new Button("Exit");
+                Button btnPenguin = new Button("Sair");
                 grid.add(btnPenguin, 1, 5);
                 btnPenguin.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -430,35 +462,194 @@ public class ZooController  {
     @FXML
     private void showMoviment()
     {
+        ConfigPanel("Movimento: " + HelloApplication.selected);
 
+//        addTextField("test");
+        System.out.println("teste " + HelloApplication.selected);
+        switch (HelloApplication.selected)
+        {
+            case "Tigre":
+
+                Label introTigerLabel = new Label( tiger.walking());
+                grid.add(introTigerLabel, 0, 1);
+
+
+
+                Button btn = new Button("sair");
+                grid.add(btn, 1, 2);
+                btn.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+            case "Golfinho":
+                Label introDolphinLabel = new Label(dolphin.swimming());
+                grid.add(introDolphinLabel, 0, 1);
+
+
+                Button btnDolphin = new Button("Sair");
+                grid.add(btnDolphin, 1, 2);
+                btnDolphin.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+            case "Pinguin":
+                Label introPenguinLabel = new Label((penguin.isSwimming()? penguin.swimming() : penguin.walking()));
+                grid.add(introPenguinLabel, 0, 2);
+
+
+                Button btnPenguin = new Button("Sair");
+                grid.add(btnPenguin, 1, 5);
+                btnPenguin.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+
+        }
     }
 
     @FXML
     private void showEating()
     {
+        ConfigPanel("Movimento: " + HelloApplication.selected);
 
+//        addTextField("test");
+        System.out.println("teste " + HelloApplication.selected);
+        switch (HelloApplication.selected)
+        {
+            case "Tigre":
+
+                Label introTigerLabel = new Label( tiger.eatingCompleted());
+                grid.add(introTigerLabel, 0, 1);
+
+
+
+                Button btn = new Button("sair");
+                grid.add(btn, 1, 2);
+                btn.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+            case "Golfinho":
+                Label introDolphinLabel = new Label(dolphin.eatingCompleted());
+                grid.add(introDolphinLabel, 0, 1);
+
+
+                Button btnDolphin = new Button("Sair");
+                grid.add(btnDolphin, 1, 2);
+                btnDolphin.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+            case "Pinguin":
+                Label introPenguinLabel = new Label((penguin.eatingCompleted()));
+                grid.add(introPenguinLabel, 0, 2);
+
+
+                Button btnPenguin = new Button("Sair");
+                grid.add(btnPenguin, 1, 5);
+                btnPenguin.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        setOptions();
+                    }
+                });
+                break;
+
+        }
     }
 
-//
-//    private void loadNewScene(String fxml) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxml));
-//        Scene scene = new Scene(fxmlLoader.load(), 320, 400);
-//
-//        HelloApplication.primaryStage.setScene(scene);
-//        HelloApplication.primaryStage.show();
-//
-//
-//    }
+
+    private  void writeObjectsToFile(Tiger tiger, Penguin penguin, Dolphin dolphin) {
+        ConfigPanel("Arquivo");
+
+        try {
+            ObjectOutputStream oosTiger = new ObjectOutputStream(new FileOutputStream("tiger.txt"));
+            ObjectOutputStream oosPenguin = new ObjectOutputStream(new FileOutputStream("penguin.txt"));
+            ObjectOutputStream oosDolphin = new ObjectOutputStream(new FileOutputStream("dolphin.txt"));
+            oosTiger.writeObject(tiger);
+            oosPenguin.writeObject(penguin);
+            oosDolphin.writeObject(dolphin);
+            Label result = new Label( "Dados salvos");
+            grid.add(result, 0, 1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Label result = new Label( "Não foi possivel salvar dados no momento");
+            grid.add(result, 0, 1);
+        }
 
 
 
-//
-//    private void handleButtonClick(TextField input1, TextField input2) {
-//        String valor1 = input1.getText();
-//        String valor2 = input2.getText();
-//        System.out.println("Valor 1: " + valor1);
-//        System.out.println("Valor 2: " + valor2);
-//    }
+
+
+        Button btn = new Button("sair");
+        grid.add(btn, 0, 2);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                initialize();
+            }
+        });
+    }
+
+
+
+
+    private void readObjectsFromFile() {
+        ConfigPanel("Arquivo");
+        try {
+            ObjectInputStream oosTiger = new ObjectInputStream(new FileInputStream("tiger.txt"));
+            ObjectInputStream oosPenguin = new ObjectInputStream(new FileInputStream("penguin.txt"));
+            ObjectInputStream oosDolphin = new ObjectInputStream(new FileInputStream("dolphin.txt"));
+            Tiger tiger = (Tiger) oosTiger.readObject();
+            Penguin penguin = (Penguin) oosPenguin.readObject();
+            Dolphin dolphin = (Dolphin) oosDolphin.readObject();
+            System.out.println("Tiger data retrieved from file: " + tiger.toString());
+            System.out.println("Penguin data retrieved from file: " + penguin.toString());
+            System.out.println("Dolphin data retrieved from file:  " + dolphin.toString());
+            Label result = new Label( tiger.toString() + "\n" + penguin.toString() + "\n" + dolphin.toString());
+            grid.add(result, 0, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Label result = new Label( "Não foi possivel ler os arquivos");
+            grid.add(result, 0, 1);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Button btn = new Button("sair");
+        grid.add(btn, 0, 2);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                initialize();
+            }
+        });
+    }
+
 
 
 }

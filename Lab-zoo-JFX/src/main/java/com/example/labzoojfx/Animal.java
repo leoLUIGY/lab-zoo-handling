@@ -52,9 +52,8 @@ public abstract class Animal implements Eat{
     }
 
     @Override
-    public void eatingFood()
-    {
-        System.out.println("The animal: " + name + "is eating");
+    public String eatingFood(){
+        return "The animal: " + name + "is eating";
     }
 
 

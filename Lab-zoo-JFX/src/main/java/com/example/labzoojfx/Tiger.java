@@ -43,23 +43,24 @@ public class Tiger extends Animal implements Walk, Serializable {
     }
 
     @Override
-    public void eatingCompleted()
+    public String eatingCompleted()
     {
-        System.out.println("Tiger: I have eaten meat.");
+        return "Tiger: eu me alimentei de carne.";
     }
 
     @Override
-    public void walking()
+    public String walking()
     {
-        System.out.println("Tiger: i am moving at the speed " + speed);
+
+        return "Tigre: eu estou me movimentando em " + speed + " km por hora";
     }
 
     @Override
     public String toString() {
-        return "Tiger{" +
-                "numberOfStripes=" + numberOfStripes +
-                ", speed=" + speed +
-                ", soundLevel=" + soundLevel +
+        return "Tigre{" +
+                "numero de listras=" + numberOfStripes +
+                ", velocidade=" + speed +
+                ", Nivel de som=" + soundLevel +
                 '}';
     }
 }
